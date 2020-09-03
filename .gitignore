@@ -1,0 +1,5 @@
+settings.json
+*.class
+*.iml
+.idea/**
+target/**
