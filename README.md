@@ -31,6 +31,10 @@ The settings file looks like this and will be generated if the app didn't find o
 {
   "external_url": "", // the external webhook url
   "internal_url": "", // the internal webhook redirect (eg. localhost:PORT)
+  "reports_bot": { // optional reporting bot, sends error messages to the first admin id in the list
+    "username": "",
+    "token": ""
+  },
   "bots": [
     {
       "username": "",
