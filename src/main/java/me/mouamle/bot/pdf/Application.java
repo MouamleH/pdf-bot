@@ -75,6 +75,9 @@ public class Application {
 
     private static Optional<BotData> loadReportsBot(JSONObject root) {
         JSONObject reportsBot = (JSONObject) root.get("reports_bot");
+        if (reportsBot == null || reportsBot.isEmpty()) {
+            return Optional.empty();
+        }
         final String username = String.valueOf(reportsBot.get("username")).trim();
         final String token = String.valueOf(reportsBot.get("token")).trim();
 
