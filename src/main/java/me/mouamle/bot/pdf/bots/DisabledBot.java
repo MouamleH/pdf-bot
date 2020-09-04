@@ -3,6 +3,7 @@ package me.mouamle.bot.pdf.bots;
 import me.mouamle.bot.pdf.Application;
 import me.mouamle.bot.pdf.service.ConcurrentCache;
 import me.mouamle.bot.pdf.service.RateLimiter;
+import me.mouamle.bot.pdf.util.keyboard.KeyboardUtils;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -35,7 +36,7 @@ public class DisabledBot extends TelegramWebhookBot {
         if (update.hasMessage()) {
             final Long chatId = update.getMessage().getChatId();
             if (botActionsRateLimiter.action(chatId)) {
-                return new SendMessage(chatId, responseMessage);
+                return new SendMessage(chatId, responseMessage).setReplyMarkup(KeyboardUtils.buildNewBotKeyboard());
             }
         }
         return null;

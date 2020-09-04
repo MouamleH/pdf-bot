@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class KeyboardUtils {
@@ -29,6 +30,18 @@ public class KeyboardUtils {
         }
 
         return keyboard;
+    }
+
+    public static InlineKeyboardMarkup buildJoinKeyboard() {
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        keyboard.add(Collections.singletonList(new InlineKeyboardButton("الإنضمام للقناة").setUrl("https://t.me/SwiperTeam")));
+        return new InlineKeyboardMarkup(keyboard);
+    }
+
+    public static InlineKeyboardMarkup buildNewBotKeyboard() {
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        keyboard.add(Collections.singletonList(new InlineKeyboardButton("الذهاب إلى البوت الجديد").setUrl("https://t.me/SwiperPDFBot?start=HI")));
+        return new InlineKeyboardMarkup(keyboard);
     }
 
     public static InlineKeyboardMarkup buildKeyboard(String languageCode) {

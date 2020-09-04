@@ -17,8 +17,9 @@ public enum BotMessage {
                     "إذا كنت قد أرسلت الصور سابقاً، حاول الإرسال مجدداً."
     ),
     MSG_IMAGE_ADDED(
-            "Send more or press \"Generate PDF \uD83D\uDCC4\".",
-            "أرسل المزيد أو اضغط \"إنشاء المستند \uD83D\uDCC4\"."
+            "Send more or press \"Generate PDF \uD83D\uDCC4\".\nWait 10 seconds before creating the document",
+            "أرسل المزيد أو اضغط \"إنشاء المستند \uD83D\uDCC4\"." +
+                    "\nأنتضر 10 ثواني قبل إنشاء المستند."
     ),
     MSG_IMAGES_CLEARED(
             "Removed all of your images.",
@@ -69,7 +70,8 @@ public enum BotMessage {
 
     ERROR_MUST_JOIN(
             "Join our channel to see bot updates and to use the bot\n@SwiperTeam",
-            "إنضم لقناتنا لمشاهدة اخبار وتحديثات البوت, ولإستخدام البوت\n@SwiperTeam"
+                "إنضم لقناتنا لمشاهدة اخبار وتحديثات البوت, ولإستخدام البوت\n" +
+                        "بعد الأنضام عاود المحاولة."
     );
 
     private final String en, ar;

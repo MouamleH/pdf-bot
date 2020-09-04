@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
@@ -34,13 +35,20 @@ import static me.mouamle.bot.pdf.BotMessage.*;
 @SuppressWarnings("rawtypes")
 public class PDFBot extends TelegramWebhookBot {
 
-    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
+    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(64);
 
     private final String token;
     private final String username;
 
     private final RateLimiter<Integer> buttonsRateLimiter;
     private final RateLimiter<Integer> botActionsRateLimiter;
+
+    private final ConcurrentCache<Integer, Boolean> channelMembersCache = new ConcurrentCache<>(
+            "channel-members",
+            Duration.ofSeconds(2).toMillis(),
+            Duration.ofSeconds(1).toMillis(),
+            1024
+    );
 
     private final UserDataService<Integer, String> userImages;
 
@@ -67,6 +75,10 @@ public class PDFBot extends TelegramWebhookBot {
     public BotApiMethod onWebhookUpdateReceived(Update update) {
         final Message message = update.getMessage();
         if (update.hasMessage()) {
+            if (!isChannelMember(message.getFrom())) {
+                return BotUtil.buildMessage(message.getFrom(), ERROR_MUST_JOIN)
+                        .setReplyMarkup(KeyboardUtils.buildJoinKeyboard());
+            }
             if (message.hasText()) {
                 return handleTextMessage(message, message.getText());
             } else if (message.hasPhoto()) {
@@ -109,14 +121,15 @@ public class PDFBot extends TelegramWebhookBot {
                         if (!deleted) {
                             log.error("Could not delete file {}", file.getName());
                         }
+                        this.userImages.clearUserImages(fromId);
                     }, error -> {
                         try {
                             execute(BotUtil.buildMessage(from, error));
                         } catch (TelegramApiException e) {
                             log.error("Could not send message to user");
                         }
+                        this.userImages.clearUserImages(fromId);
                     });
-                    this.userImages.clearUserImages(fromId);
                 }, 5, TimeUnit.SECONDS);
 
                 return BotUtil.buildAnswer(languageCode, MSG_GENERATING_PDF, callbackQueryId);
@@ -132,10 +145,6 @@ public class PDFBot extends TelegramWebhookBot {
 
     private BotApiMethod handlePhotoMessage(Message message) {
         final User from = message.getFrom();
-
-        if (!isChannelMember(from)) {
-            return BotUtil.buildMessage(from, ERROR_MUST_JOIN);
-        }
 
         List<PhotoSize> photo = message.getPhoto();
         String imageId = photo.get(photo.size() - 1).getFileId();
@@ -157,10 +166,6 @@ public class PDFBot extends TelegramWebhookBot {
     private BotApiMethod handleTextMessage(Message message, String text) {
         final User from = message.getFrom();
 
-        if (!isChannelMember(from)) {
-            return BotUtil.buildMessage(from, ERROR_MUST_JOIN);
-        }
-
         if (text.startsWith("/")) {
             // Commands
             if (text.startsWith("/start")) {
@@ -171,7 +176,7 @@ public class PDFBot extends TelegramWebhookBot {
             if (message.isReply()) {
                 Message reply = message.getReplyToMessage();
 
-                log.info("User {} is renaming a document", from.getId());
+                log.info("User {} is renaming a document to {}", from.getId(), message.getText());
 
                 Document document = reply.getDocument();
                 GetFile getFile = new GetFile()
@@ -188,7 +193,7 @@ public class PDFBot extends TelegramWebhookBot {
                 java.io.File file = null;
                 try {
                     final File tgFile = execute(getFile);
-                    file = downloadFile(tgFile);
+                    file = downloadFile(tgFile, new java.io.File(newFileName));
 
                     InputMedia inputMedia = new InputMediaDocument();
                     inputMedia.setMedia(file, message.getText() + ".pdf");
@@ -200,7 +205,12 @@ public class PDFBot extends TelegramWebhookBot {
 
                     editMessageMedia.setMedia(inputMedia);
 
-                    execute(editMessageMedia);
+                    try {
+                        execute(editMessageMedia);
+                    } catch (TelegramApiException ex) {
+                        log.warn("Could not execute edit file, name {}", file.getName());
+                        return BotUtil.buildMessage(from, ERROR_INVALID_FILE_NAME);
+                    }
 
                     return BotUtil.buildMessage(from, MSG_FILE_RENAMED)
                             .setReplyToMessageId(reply.getMessageId());
@@ -208,7 +218,7 @@ public class PDFBot extends TelegramWebhookBot {
                 } catch (TelegramApiException e) {
                     log.error("Could not get file", e);
                 } finally {
-                    if (file != null) {
+                    if (file != null && file.exists()) {
                         boolean deleted = file.delete();
                         if (!deleted) {
                             log.error("Could not delete file {}", file.getName());
@@ -216,20 +226,39 @@ public class PDFBot extends TelegramWebhookBot {
                     }
                 }
             }
+
+            final User forwardFrom = message.getForwardFrom();
+            if (forwardFrom != null) {
+                return new SendMessage()
+                        .setChatId(message.getChatId())
+                        .setText(forwardFrom.getFirstName() + "\n`" + forwardFrom.getId() + "`\nIs Member: " + isChannelMember(forwardFrom))
+                        .enableMarkdown(true);
+            }
         }
         return null;
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isChannelMember(User user) {
+        if (channelMembersCache.containsKey(user.getId())) {
+            return channelMembersCache.get(user.getId());
+        }
+
         GetChatMember getChatMember = new GetChatMember();
         getChatMember.setChatId("@SwiperTeam");
         getChatMember.setUserId(user.getId());
         try {
             final ChatMember chatMember = execute(getChatMember);
             final String status = chatMember.getStatus();
-            return !(status.equalsIgnoreCase("left") | status.equalsIgnoreCase("kicked"));
+            final boolean isMember = !(status.equalsIgnoreCase("left") | status.equalsIgnoreCase("kicked"));
+            if (!isMember) {
+                log.warn("A user tried to use the bot without joining the channel, status {}", status);
+            }
+
+            channelMembersCache.put(user.getId(), isMember);
+            return isMember;
         } catch (TelegramApiException e) {
+            log.warn(e.getLocalizedMessage());
+            e.printStackTrace();
             return false;
         }
     }
