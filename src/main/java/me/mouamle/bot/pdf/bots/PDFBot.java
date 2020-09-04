@@ -116,6 +116,7 @@ public class PDFBot extends TelegramWebhookBot {
                             log.error("Could not send message to user");
                         }
                     });
+                    this.userImages.clearUserImages(fromId);
                 }, 5, TimeUnit.SECONDS);
 
                 return BotUtil.buildAnswer(languageCode, MSG_GENERATING_PDF, callbackQueryId);
