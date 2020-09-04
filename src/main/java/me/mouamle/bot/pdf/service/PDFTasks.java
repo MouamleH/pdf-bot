@@ -1,4 +1,4 @@
-package me.mouamle.bot.pdf;
+package me.mouamle.bot.pdf.service;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -6,6 +6,8 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 import lombok.extern.slf4j.Slf4j;
+import me.mouamle.bot.pdf.BotMessage;
+import me.mouamle.bot.pdf.bots.PDFBot;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 

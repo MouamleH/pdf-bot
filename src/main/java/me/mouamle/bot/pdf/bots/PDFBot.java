@@ -1,7 +1,9 @@
-package me.mouamle.bot.pdf;
+package me.mouamle.bot.pdf.bots;
 
 import lombok.extern.slf4j.Slf4j;
+import me.mouamle.bot.pdf.Application;
 import me.mouamle.bot.pdf.service.ConcurrentCache;
+import me.mouamle.bot.pdf.service.PDFTasks;
 import me.mouamle.bot.pdf.service.RateLimiter;
 import me.mouamle.bot.pdf.service.UserDataService;
 import me.mouamle.bot.pdf.util.BotUtil;
@@ -20,7 +22,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Executors;
@@ -34,11 +35,6 @@ import static me.mouamle.bot.pdf.BotMessage.*;
 public class PDFBot extends TelegramWebhookBot {
 
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
-
-    private static final List<Integer> admins = Arrays.asList(
-            121414901,
-            1188784367
-    );
 
     private final String token;
     private final String username;
@@ -238,7 +234,7 @@ public class PDFBot extends TelegramWebhookBot {
     }
 
     private boolean isAdmin(int userId) {
-        return admins.contains(userId);
+        return Application.admins.contains(userId);
     }
 
     @Override
