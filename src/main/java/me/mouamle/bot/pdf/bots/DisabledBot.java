@@ -4,6 +4,7 @@ import me.mouamle.bot.pdf.Application;
 import me.mouamle.bot.pdf.service.ConcurrentCache;
 import me.mouamle.bot.pdf.service.RateLimiter;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;

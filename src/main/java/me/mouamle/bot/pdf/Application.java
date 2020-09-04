@@ -6,14 +6,17 @@ import me.mouamle.bot.pdf.bots.AbstractBot;
 import me.mouamle.bot.pdf.bots.DisabledBot;
 import me.mouamle.bot.pdf.bots.PDFBot;
 import me.mouamle.bot.pdf.util.BotUtil;
+import me.mouamle.bot.pdf.web.CustomWebhook;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
+import org.telegram.telegrambots.meta.ApiContext;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.generics.Webhook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -103,6 +106,7 @@ public class Application {
         List<BotData> botsData = loadData(root);
 
         ApiContextInitializer.init();
+        ApiContext.register(Webhook.class, CustomWebhook.class);
 
         final Optional<BotData> oReportsBot = loadReportsBot(root);
         oReportsBot.ifPresent(botData -> {
