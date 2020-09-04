@@ -6,7 +6,7 @@
 
     <groupId>me.mouamle</groupId>
     <artifactId>pdf-bot-multi</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
 
     <repositories>
         <repository>
@@ -17,6 +17,7 @@
 
     <properties>
         <slf4j.version>2.0.0-alpha1</slf4j.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
 
