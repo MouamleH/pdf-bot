@@ -13,7 +13,7 @@ Compile the code using.
 ```sh
 mvn clean compile assembly:single
 ```
-Or download the `.jar` file from the release section
+Or download the `.jar` file from the [release section](https://github.com/MouamleH/pdf-bot/releases/tag/1.0)
 
 ### Running
 
