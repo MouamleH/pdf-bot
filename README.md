@@ -9,7 +9,7 @@ If you don't want to build your own, you will find a running bot in [this channe
 Otherwise, you need an SLL enabled hosting to get started.
 
 ### Downloading
-Compile the code using. 
+Clone this repo and compile the code using. 
 ```sh
 mvn clean compile assembly:single
 ```
