@@ -62,6 +62,10 @@ public enum BotMessage {
             "Invalid file name",
             "الإسم غير صالح."
     ),
+    ERROR_MUST_REPLY_TO_DOCUMENT(
+            "Reply to a document to change its name",
+            "رد على مستند لتغير اسمه"
+    ),
 
     ERROR_GENERIC_ERROR(
             "An error occurred, Contact bot admin.",
@@ -70,8 +74,8 @@ public enum BotMessage {
 
     ERROR_MUST_JOIN(
             "Join our channel to see bot updates and to use the bot\n@SwiperTeam",
-                "إنضم لقناتنا لمشاهدة اخبار وتحديثات البوت, ولإستخدام البوت\n" +
-                        "بعد الأنضام عاود المحاولة."
+            "إنضم لقناتنا لمشاهدة اخبار وتحديثات البوت, ولإستخدام البوت\n" +
+                    "بعد الأنضام عاود المحاولة."
     );
 
     private final String en, ar;

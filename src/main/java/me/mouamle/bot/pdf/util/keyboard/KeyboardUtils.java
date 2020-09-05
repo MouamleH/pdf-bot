@@ -1,5 +1,6 @@
 package me.mouamle.bot.pdf.util.keyboard;
 
+import me.mouamle.bot.pdf.util.keyboard.image.BuildClearImagesKeyboard;
 import me.mouamle.bot.pdf.util.keyboard.image.BuildImageKeyboardAR;
 import me.mouamle.bot.pdf.util.keyboard.image.BuildImageKeyboardEN;
 import mouamle.generator.KeyboardGenerator;
@@ -41,6 +42,11 @@ public class KeyboardUtils {
     public static InlineKeyboardMarkup buildNewBotKeyboard() {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         keyboard.add(Collections.singletonList(new InlineKeyboardButton("الذهاب إلى البوت الجديد").setUrl("https://t.me/SwiperPDFBot?start=HI")));
+        return new InlineKeyboardMarkup(keyboard);
+    }
+
+    public static InlineKeyboardMarkup buildDeleteImagesKeyboard() {
+        List<List<InlineKeyboardButton>> keyboard = generateKeyboard(new BuildClearImagesKeyboard());
         return new InlineKeyboardMarkup(keyboard);
     }
 

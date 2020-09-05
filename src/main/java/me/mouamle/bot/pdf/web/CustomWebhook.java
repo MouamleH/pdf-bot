@@ -2,6 +2,7 @@ package me.mouamle.bot.pdf.web;
 
 import com.google.inject.Inject;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.ssl.SSLContextConfigurator;
 import org.glassfish.grizzly.ssl.SSLEngineConfigurator;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -48,20 +49,9 @@ public class CustomWebhook implements Webhook {
         rc.register(restApi);
         rc.register(JacksonFeature.class);
         rc.register(ResponseFilter.class);
+        rc.register(CustomExceptionMapper.class);
 
-        final HttpServer grizzlyServer;
-        if (keystoreServerFile != null && keystoreServerPwd != null) {
-            SSLContextConfigurator sslContext = new SSLContextConfigurator();
-
-            // set up security context
-            sslContext.setKeyStoreFile(keystoreServerFile); // contains server keypair
-            sslContext.setKeyStorePass(keystoreServerPwd);
-
-            grizzlyServer = GrizzlyHttpServerFactory.createHttpServer(getBaseURI(), rc, true,
-                    new SSLEngineConfigurator(sslContext).setClientMode(false).setNeedClientAuth(false));
-        } else {
-            grizzlyServer = GrizzlyHttpServerFactory.createHttpServer(getBaseURI(), rc);
-        }
+        final HttpServer grizzlyServer = GrizzlyHttpServerFactory.createHttpServer(getBaseURI(), rc);
 
         try {
             grizzlyServer.start();

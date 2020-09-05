@@ -151,7 +151,8 @@ public class PDFBot extends TelegramWebhookBot {
 
         final boolean added = userImages.add(from.getId(), imageId);
         if (!added) {
-            return BotUtil.buildMessage(from, MSG_MAX_IMAGES, userImages.size(from.getId()));
+            return BotUtil.buildMessage(from, MSG_MAX_IMAGES, userImages.size(from.getId()))
+                    .setReplyMarkup(KeyboardUtils.buildDeleteImagesKeyboard());
         }
 
         if (botActionsRateLimiter.action(from.getId())) {
@@ -160,6 +161,8 @@ public class PDFBot extends TelegramWebhookBot {
                     .setReplyMarkup(KeyboardUtils.buildKeyboard(from.getLanguageCode()));
         }
 
+//        return new EditMessageText().setChatId(message.getChatId())
+//                .setMessageId();
         return null;
     }
 
@@ -179,6 +182,9 @@ public class PDFBot extends TelegramWebhookBot {
                 log.info("User {} is renaming a document to {}", from.getId(), message.getText());
 
                 Document document = reply.getDocument();
+                if (document == null) {
+                    return BotUtil.buildMessage(from, ERROR_MUST_REPLY_TO_DOCUMENT);
+                }
                 GetFile getFile = new GetFile()
                         .setFileId(document.getFileId());
 
