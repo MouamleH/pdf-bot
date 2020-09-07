@@ -4,7 +4,7 @@ A Telegram bot to group images in a single pdf document.
 
 ## Building Your Own Bot
 
-If you don't want to build your own, you will find a running bot in [this channel](https://t.me/SwiperTeam)
+If you don't want to build your own, you will find a running bot in [this channel](https://t.me/s/SwiperTeam)
 
 Otherwise, you need an SSL enabled hosting to get started.
 
