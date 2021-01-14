@@ -5,11 +5,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-@Provider
 public class CustomExceptionMapper implements ExceptionMapper<Throwable> {
 
     @Override

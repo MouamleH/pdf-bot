@@ -35,7 +35,7 @@ public class DisabledBot extends TelegramWebhookBot {
         if (update.hasMessage()) {
             final Long chatId = update.getMessage().getChatId();
             if (botActionsRateLimiter.action(chatId)) {
-                return new SendMessage(chatId, responseMessage).setReplyMarkup(KeyboardUtils.buildNewBotKeyboard());
+                return new SendMessage(chatId, responseMessage).setReplyMarkup(KeyboardUtils.buildNewBotKeyboard("أضغط هنا للأنتقال الى البوت الجديد"));
             }
         }
         return null;

@@ -45,6 +45,10 @@ public enum BotMessage {
             "جارِ إنشاء المستند ⏳...\n" +
                     "الرجاء الأنتضار لمدة 10 الى 20 ثانية قبل الضغط على الزر مره ثانيه."
     ),
+    MSG_N_IMAGES(
+            "File has %d images.",
+            "المستند يحتوي على %d صورة."
+    ),
 
     ERROR_DOWNLOAD_ERROR(
             "Could not download your images, try again later.",
@@ -66,6 +70,10 @@ public enum BotMessage {
             "Reply to a document to change its name",
             "رد على مستند لتغير اسمه"
     ),
+    ERROR_SEND_START(
+            "send /start",
+            "أَرسِل /start"
+    ),
 
     ERROR_GENERIC_ERROR(
             "An error occurred, Contact bot admin.",
@@ -74,8 +82,7 @@ public enum BotMessage {
 
     ERROR_MUST_JOIN(
             "Join our channel to see bot updates and to use the bot\n@SwiperTeam",
-            "إنضم لقناتنا لمشاهدة اخبار وتحديثات البوت, ولإستخدام البوت\n" +
-                    "بعد الأنضام عاود المحاولة."
+            "إنضم للقناة حتى تستطيع استخدام البوت"
     );
 
     private final String en, ar;

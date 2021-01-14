@@ -89,13 +89,13 @@ public class PDFBot extends TelegramWebhookBot {
             final String callbackQueryId = callbackQuery.getId();
             final User from = callbackQuery.getFrom();
             final String languageCode = from.getLanguageCode();
+            final Integer fromId = from.getId();
 
-            if (!buttonsRateLimiter.action(from.getId())) {
+            if (!buttonsRateLimiter.action(fromId)) {
                 return BotUtil.buildAnswer(languageCode, ERROR_NO_SPAM, callbackQueryId);
             }
 
             if (callbackQuery.getData().contains("build-imgs")) {
-                final Integer fromId = from.getId();
 
                 final Queue<String> images = this.userImages.get(fromId);
 
@@ -109,7 +109,7 @@ public class PDFBot extends TelegramWebhookBot {
                         SendDocument sendDocument = new SendDocument();
                         sendDocument.setDocument(file);
                         sendDocument.setChatId(String.valueOf(fromId));
-                        sendDocument.setCaption(MSG_FILE_RENAME.formatted(languageCode));
+                        sendDocument.setCaption(MSG_FILE_RENAME.formatted(languageCode) + "\n" + MSG_N_IMAGES.formatted(languageCode, usrImages.size()));
 
                         try {
                             execute(sendDocument);
@@ -134,8 +134,8 @@ public class PDFBot extends TelegramWebhookBot {
 
                 return BotUtil.buildAnswer(languageCode, MSG_GENERATING_PDF, callbackQueryId);
             } else if (callbackQuery.getData().contains("clear-imgs")) {
+                this.userImages.clearUserImages(fromId);
                 return BotUtil.buildAnswer(languageCode, MSG_IMAGES_CLEARED, callbackQueryId);
-
             }
             return BotUtil.buildAnswer(languageCode, ERROR_GENERIC_ERROR, callbackQueryId);
         }
@@ -160,9 +160,6 @@ public class PDFBot extends TelegramWebhookBot {
                     .setReplyToMessageId(message.getMessageId())
                     .setReplyMarkup(KeyboardUtils.buildKeyboard(from.getLanguageCode()));
         }
-
-//        return new EditMessageText().setChatId(message.getChatId())
-//                .setMessageId();
         return null;
     }
 
@@ -172,6 +169,7 @@ public class PDFBot extends TelegramWebhookBot {
         if (text.startsWith("/")) {
             // Commands
             if (text.startsWith("/start")) {
+                this.userImages.clearUserImages(from.getId());
                 return BotUtil.buildMessage(from, MSG_START);
             }
         } else {
@@ -199,7 +197,7 @@ public class PDFBot extends TelegramWebhookBot {
                 java.io.File file = null;
                 try {
                     final File tgFile = execute(getFile);
-                    file = downloadFile(tgFile, new java.io.File(newFileName));
+                    file = downloadFile(tgFile);
 
                     InputMedia inputMedia = new InputMediaDocument();
                     inputMedia.setMedia(file, message.getText() + ".pdf");
@@ -241,7 +239,7 @@ public class PDFBot extends TelegramWebhookBot {
                         .enableMarkdown(true);
             }
         }
-        return null;
+        return BotUtil.buildMessage(from, ERROR_SEND_START);
     }
 
     public boolean isChannelMember(User user) {
