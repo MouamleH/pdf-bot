@@ -29,19 +29,21 @@ stating that you need to fill out some information about your bot in `settings.j
 The settings file looks like this and will be generated if the app didn't find one.
 ```json5
 {
-  "external_url": "", // the external webhook url
-  "internal_url": "", // the internal webhook redirect (eg. localhost:PORT)
-  "reports_bot": { // optional reporting bot, sends error messages to the first admin id in the list
-    "username": "",
-    "token": ""
-  },
-  "bots": [
-    {
-      "username": "",
-      "token": ""
-    }
-  ]
-}
+    "external_url": "",   // the external webhook url
+    "internal_url": "",   // the internal webhook redirect (eg. localhost:PORT)
+    "reports_bot": {      // optional reporting bot, sends error messages to the first admin id in the list
+        "username": "",
+        "token": ""
+    },
+    "bots": [
+      {
+        "username": "",     // bot username
+        "token": "",        // bot token
+        "enabled": true,    // if the bot is enabled or not
+        "response_msg": ""  // message to show to users if the bot is disabled
+      }
+    ]
+  }
 ```
 
 After filling out your bot/s info you need to start the app again, and the bot will start working.
