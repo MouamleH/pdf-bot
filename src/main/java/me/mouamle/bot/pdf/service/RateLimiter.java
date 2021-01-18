@@ -1,6 +1,7 @@
 package me.mouamle.bot.pdf.service;
 
 import lombok.extern.slf4j.Slf4j;
+import me.mouamle.bot.pdf.service.builder.RateLimiterBuilder;
 
 @Slf4j
 public class RateLimiter<K> {
@@ -8,13 +9,13 @@ public class RateLimiter<K> {
     private final String name;
     private final int maxAttempts;
 
-    private final boolean enableTrace;
+    private final boolean enableLogging;
     private final ConcurrentCache<K, Integer> cache;
 
     public RateLimiter(String name, int maxAttempts, boolean enableLogging, ConcurrentCache<K, Integer> cache) {
         this.name = name;
         this.maxAttempts = maxAttempts;
-        this.enableTrace = enableLogging;
+        this.enableLogging = enableLogging;
         this.cache = cache;
     }
 
@@ -33,7 +34,7 @@ public class RateLimiter<K> {
 
         Integer attempts = cache.peek(key);
         if (attempts >= maxAttempts) {
-            if (enableTrace) {
+            if (enableLogging) {
                 log.info("entry {} reached max attempts of {} for rate limiter {}", key, maxAttempts, name);
             } else {
                 log.trace("entry {} reached max attempts of {} for rate limiter {}", key, maxAttempts, name);
@@ -43,6 +44,10 @@ public class RateLimiter<K> {
 
         cache.put(key, attempts + 1);
         return true;
+    }
+
+    public static RateLimiterBuilder builder() {
+        return new RateLimiterBuilder();
     }
 
 }

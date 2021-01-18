@@ -8,7 +8,6 @@ import mouamle.generator.classes.ButtonHolder;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +41,7 @@ public class KeyboardUtils {
 
     public static InlineKeyboardMarkup buildNewBotKeyboard(String message) {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-        keyboard.add(Collections.singletonList(new InlineKeyboardButton(message).setUrl("https://t.me/SwiperPDFBot?start=HI")));
+        keyboard.add(Collections.singletonList(new InlineKeyboardButton(message).setUrl("https://t.me/SwiperTeam")));
         return new InlineKeyboardMarkup(keyboard);
     }
 

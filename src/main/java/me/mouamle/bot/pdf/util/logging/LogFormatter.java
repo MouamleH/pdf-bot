@@ -53,14 +53,13 @@ public class LogFormatter extends Formatter {
         builder.append("]");
 
         builder.append(" [");
-        builder.append(className.substring(className.lastIndexOf(".") + 1));
-        builder.append(':');
-        builder.append(record.getSourceMethodName());
+        builder.append(String.format("%7s", record.getLevel().getName()));
         builder.append("]");
 
-
         builder.append(" [");
-        builder.append(record.getLevel().getName());
+        builder.append(String.format("%16s", className.substring(className.lastIndexOf(".") + 1)));
+        builder.append(':');
+        builder.append(String.format("%-32s", record.getSourceMethodName()));
         builder.append("]");
 
         builder.append(ANSI_WHITE);

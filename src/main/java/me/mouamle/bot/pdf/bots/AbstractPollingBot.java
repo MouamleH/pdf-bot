@@ -1,14 +1,14 @@
 package me.mouamle.bot.pdf.bots;
 
-import me.mouamle.bot.pdf.Application;
+import me.mouamle.bot.pdf.loader.BotData;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-public class AbstractBot extends TelegramLongPollingBot {
+public class AbstractPollingBot extends TelegramLongPollingBot {
 
-    private final Application.BotData botData;
+    private final BotData botData;
 
-    public AbstractBot(Application.BotData botData) {
+    public AbstractPollingBot(BotData botData) {
         this.botData = botData;
     }
 
