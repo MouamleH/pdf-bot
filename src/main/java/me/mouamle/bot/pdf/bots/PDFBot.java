@@ -2,13 +2,14 @@ package me.mouamle.bot.pdf.bots;
 
 import lombok.extern.slf4j.Slf4j;
 import me.mouamle.bot.pdf.Application;
+import me.mouamle.bot.pdf.loader.BotData;
 import me.mouamle.bot.pdf.service.ConcurrentCache;
 import me.mouamle.bot.pdf.service.PDFTasks;
 import me.mouamle.bot.pdf.service.RateLimiter;
 import me.mouamle.bot.pdf.service.UserDataService;
 import me.mouamle.bot.pdf.util.BotUtil;
 import me.mouamle.bot.pdf.util.keyboard.KeyboardUtils;
-import org.telegram.telegrambots.bots.TelegramWebhookBot;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
@@ -33,12 +34,9 @@ import static me.mouamle.bot.pdf.BotMessage.*;
 
 @Slf4j
 @SuppressWarnings("rawtypes")
-public class PDFBot extends TelegramWebhookBot {
+public class PDFBot extends AbstractWebhookBot {
 
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(64);
-
-    private final String token;
-    private final String username;
 
     private final RateLimiter<Integer> buttonsRateLimiter;
     private final RateLimiter<Integer> botActionsRateLimiter;
@@ -52,22 +50,22 @@ public class PDFBot extends TelegramWebhookBot {
 
     private final UserDataService<Integer, String> userImages;
 
-    public PDFBot(Application.BotData botData) {
-        this.token = botData.getToken();
-        this.username = botData.getUsername();
-        ConcurrentCache<Integer, Integer> buttonActionsCache = new ConcurrentCache<>(
-                "user-actions-cache",
-                Duration.ofSeconds(6).toMillis(),
-                Duration.ofSeconds(2).toMillis(),
-                1024 * 10);
-        buttonsRateLimiter = new RateLimiter<>("buttons", 1, true, buttonActionsCache);
+    public PDFBot(BotData botData) {
+        super(botData);
+        buttonsRateLimiter = RateLimiter.builder()
+                .name("user-actions")
+                .enableLogging(true)
+                .size(1024 * 10)
+                .maxAttempts(1)
+                .cleanUp(2)
+                .ttl(6)
+                .build();
 
-        ConcurrentCache<Integer, Integer> botActionsCache = new ConcurrentCache<>(
-                "bot-actions-cache",
-                Duration.ofSeconds(4).toMillis(),
-                Duration.ofSeconds(1).toMillis(),
-                1024);
-        botActionsRateLimiter = new RateLimiter<>("bot-actions", 1, false, botActionsCache);
+        botActionsRateLimiter = RateLimiter.builder()
+                .name("bot-actions")
+                .size(1024)
+                .ttl(4)
+                .build();
         userImages = new UserDataService<>("user-images", 32);
     }
 
@@ -86,68 +84,79 @@ public class PDFBot extends TelegramWebhookBot {
             }
         } else if (update.hasCallbackQuery()) {
             final CallbackQuery callbackQuery = update.getCallbackQuery();
-            final String callbackQueryId = callbackQuery.getId();
-            final User from = callbackQuery.getFrom();
-            final String languageCode = from.getLanguageCode();
-            final Integer fromId = from.getId();
-
-            if (!buttonsRateLimiter.action(fromId)) {
-                return BotUtil.buildAnswer(languageCode, ERROR_NO_SPAM, callbackQueryId);
-            }
-
-            if (callbackQuery.getData().contains("build-imgs")) {
-
-                final Queue<String> images = this.userImages.get(fromId);
-
-                if (images.isEmpty()) {
-                    return BotUtil.buildAnswer(languageCode, MSG_NO_IMAGES, callbackQueryId);
-                }
-
-                executor.schedule(() -> {
-                    final Queue<String> usrImages = this.userImages.get(fromId);
-                    PDFTasks.generatePDF(this, fromId, isAdmin(fromId), usrImages, file -> {
-                        SendDocument sendDocument = new SendDocument();
-                        sendDocument.setDocument(file);
-                        sendDocument.setChatId(String.valueOf(fromId));
-                        sendDocument.setCaption(MSG_FILE_RENAME.formatted(languageCode) + "\n" + MSG_N_IMAGES.formatted(languageCode, usrImages.size()));
-
-                        try {
-                            execute(sendDocument);
-                        } catch (TelegramApiException e) {
-                            log.error("Could not send document to user {}, msg: {}", fromId, e.getMessage());
-                        }
-
-                        boolean deleted = file.delete();
-                        if (!deleted) {
-                            log.error("Could not delete file {}", file.getName());
-                        }
-                        this.userImages.clearUserImages(fromId);
-                    }, error -> {
-                        try {
-                            execute(BotUtil.buildMessage(from, error));
-                        } catch (TelegramApiException e) {
-                            log.error("Could not send message to user");
-                        }
-                        this.userImages.clearUserImages(fromId);
-                    });
-                }, 5, TimeUnit.SECONDS);
-
-                return BotUtil.buildAnswer(languageCode, MSG_GENERATING_PDF, callbackQueryId);
-            } else if (callbackQuery.getData().contains("clear-imgs")) {
-                this.userImages.clearUserImages(fromId);
-                return BotUtil.buildAnswer(languageCode, MSG_IMAGES_CLEARED, callbackQueryId);
-            }
-            return BotUtil.buildAnswer(languageCode, ERROR_GENERIC_ERROR, callbackQueryId);
+            return handleCallbackQuery(callbackQuery);
         }
 
         return null;
     }
 
+    private BotApiMethod handleCallbackQuery(CallbackQuery callbackQuery) {
+        final String callbackQueryId = callbackQuery.getId();
+        final User from = callbackQuery.getFrom();
+        final String languageCode = from.getLanguageCode();
+        final Integer fromId = from.getId();
+
+        if (!buttonsRateLimiter.action(fromId)) {
+            return BotUtil.buildAnswer(languageCode, ERROR_NO_SPAM, callbackQueryId);
+        }
+
+        if (callbackQuery.getData().contains("build-imgs")) {
+            return handleBuildImages(callbackQueryId, from, languageCode, fromId);
+        } else if (callbackQuery.getData().contains("clear-imgs")) {
+            return handleClearImages(callbackQueryId, languageCode, fromId);
+        }
+        return BotUtil.buildAnswer(languageCode, ERROR_GENERIC_ERROR, callbackQueryId);
+    }
+
+    private AnswerCallbackQuery handleClearImages(String callbackQueryId, String languageCode, Integer fromId) {
+        this.userImages.clearUserImages(fromId);
+        return BotUtil.buildAnswer(languageCode, MSG_IMAGES_CLEARED, callbackQueryId);
+    }
+
+    private AnswerCallbackQuery handleBuildImages(String callbackQueryId, User from, String languageCode, Integer fromId) {
+        final Queue<String> images = this.userImages.get(fromId);
+
+        if (images.isEmpty()) {
+            return BotUtil.buildAnswer(languageCode, MSG_NO_IMAGES, callbackQueryId);
+        }
+
+        executor.schedule(() -> {
+            final Queue<String> usrImages = this.userImages.get(fromId);
+            PDFTasks.generatePDF(this, fromId, isAdmin(fromId), usrImages, file -> {
+                SendDocument sendDocument = new SendDocument();
+                sendDocument.setDocument(file);
+                sendDocument.setChatId(String.valueOf(fromId));
+                sendDocument.setCaption(MSG_FILE_RENAME.formatted(languageCode) + "\n" + MSG_N_IMAGES.formatted(languageCode, usrImages.size()));
+
+                try {
+                    execute(sendDocument);
+                } catch (TelegramApiException e) {
+                    log.error("Could not send document to user {}, msg: {}", fromId, e.getMessage());
+                }
+
+                boolean deleted = file.delete();
+                if (!deleted) {
+                    log.error("Could not delete file {}", file.getName());
+                }
+                this.userImages.clearUserImages(fromId);
+            }, error -> {
+                try {
+                    execute(BotUtil.buildMessage(from, error));
+                } catch (TelegramApiException e) {
+                    log.error("Could not send message to user");
+                }
+                this.userImages.clearUserImages(fromId);
+            });
+        }, 5, TimeUnit.SECONDS);
+
+        return BotUtil.buildAnswer(languageCode, MSG_GENERATING_PDF, callbackQueryId);
+    }
+
     private BotApiMethod handlePhotoMessage(Message message) {
         final User from = message.getFrom();
 
-        List<PhotoSize> photo = message.getPhoto();
-        String imageId = photo.get(photo.size() - 1).getFileId();
+        List<PhotoSize> images = message.getPhoto();
+        String imageId = images.get(images.size() - 1).getFileId();
 
         final boolean added = userImages.add(from.getId(), imageId);
         if (!added) {
@@ -270,21 +279,5 @@ public class PDFBot extends TelegramWebhookBot {
     private boolean isAdmin(int userId) {
         return Application.admins.contains(userId);
     }
-
-    @Override
-    public String getBotUsername() {
-        return username;
-    }
-
-    @Override
-    public String getBotToken() {
-        return token;
-    }
-
-    @Override
-    public String getBotPath() {
-        return getBotUsername();
-    }
-
 
 }

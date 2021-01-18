@@ -71,25 +71,8 @@ public class ConcurrentCache<K, V> implements SnapshotProvider<K, V> {
         return cleanUpInterval;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public int size() {
         return mMap.size();
-    }
-
-    /**
-     * Returns a copy of the map at the point of the method call.
-     *
-     * @return a snapshot of the cache
-     */
-    public Map<K, V> snapshot() {
-        Map<K, V> snapshot = new HashMap<>();
-        for (K key : mMap.keySet()) {
-            snapshot.put(key, mMap.get(key).peek());
-        }
-        return snapshot;
     }
 
     /**
@@ -183,6 +166,25 @@ public class ConcurrentCache<K, V> implements SnapshotProvider<K, V> {
                 }
             }
         }
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Returns a copy of the map at the point of the method call.
+     *
+     * @return a snapshot of the cache
+     */
+    @Override
+    public Map<K, V> snapshot() {
+        Map<K, V> snapshot = new HashMap<>();
+        for (K key : mMap.keySet()) {
+            snapshot.put(key, mMap.get(key).peek());
+        }
+        return snapshot;
     }
 
     /**

@@ -3,7 +3,7 @@ package me.mouamle.bot.pdf.util;
 import lombok.extern.slf4j.Slf4j;
 import me.mouamle.bot.pdf.Application;
 import me.mouamle.bot.pdf.BotMessage;
-import me.mouamle.bot.pdf.bots.AbstractBot;
+import me.mouamle.bot.pdf.bots.AbstractPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,9 +14,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiValidationException;
 @Slf4j
 public class BotUtil {
 
-    private static AbstractBot reportingBot;
+    private static AbstractPollingBot reportingBot;
 
-    public static void setReportingBot(AbstractBot reportingBot) {
+    public static void setReportingBot(AbstractPollingBot reportingBot) {
         BotUtil.reportingBot = reportingBot;
     }
 

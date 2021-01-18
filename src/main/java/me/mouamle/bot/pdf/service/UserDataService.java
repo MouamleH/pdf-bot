@@ -68,4 +68,5 @@ public class UserDataService<K, V> implements SnapshotProvider<String, Integer> 
     public Map<String, Integer> snapshot() {
         return Collections.singletonMap("total", dataMap.size());
     }
+
 }
