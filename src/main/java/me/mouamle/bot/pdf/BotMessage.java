@@ -83,6 +83,19 @@ public enum BotMessage {
     ERROR_MUST_JOIN(
             "Join our channel to see bot updates and to use the bot\n@SwiperTeam",
             "إنضم للقناة حتى تستطيع استخدام البوت"
+    ),
+
+
+    // OCR BOT MESSAGES
+
+    MESSAGE_MUST_BE_DOCUMENT(
+            "You only can send uncompressed images to this bot, you can't send anything else.",
+            "هذا البوت يستقبل الصور الغير مضغوطة فقط."
+    ),
+
+    OCR_CHOOSE_LANGUAGE(
+            "Please select a language to proceed",
+            "من فضلك, اختر لغة الكتابة"
     );
 
     private final String en, ar;

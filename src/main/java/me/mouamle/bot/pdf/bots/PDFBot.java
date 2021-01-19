@@ -72,6 +72,7 @@ public class PDFBot extends AbstractWebhookBot {
     @Override
     public BotApiMethod onWebhookUpdateReceived(Update update) {
         final Message message = update.getMessage();
+
         if (update.hasMessage()) {
             if (!isChannelMember(message.getFrom())) {
                 return BotUtil.buildMessage(message.getFrom(), ERROR_MUST_JOIN)
