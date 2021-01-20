@@ -1,4 +1,4 @@
-package me.mouamle.bot.pdf.bots;
+package me.mouamle.bot.pdf.loader;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;

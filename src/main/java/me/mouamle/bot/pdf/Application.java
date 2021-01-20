@@ -1,9 +1,10 @@
 package me.mouamle.bot.pdf;
 
 import lombok.extern.slf4j.Slf4j;
-import me.mouamle.bot.pdf.bots.DisabledBot;
-import me.mouamle.bot.pdf.bots.PDFBot;
-import me.mouamle.bot.pdf.bots.Settings;
+import me.mouamle.bot.pdf.bots.impl.DisabledBot;
+import me.mouamle.bot.pdf.bots.impl.PDFBot;
+import me.mouamle.bot.pdf.loader.Settings;
+import me.mouamle.bot.pdf.bots.impl.TextBot;
 import me.mouamle.bot.pdf.loader.BotData;
 import me.mouamle.bot.pdf.loader.BotLoader;
 import me.mouamle.bot.pdf.web.CustomWebhook;
@@ -52,6 +53,8 @@ public class Application {
                     api.registerBot(new PDFBot(data));
                     break;
                 case TEXT_TO_PDF:
+                    api.registerBot(new TextBot(data));
+                    break;
                 case MERGE_PDF:
                 case EXTRACT_CONTENT:
                     log.error("Bot {} tried to register as {} but it's not implemented yet!", data.getUsername(), data.getType());
