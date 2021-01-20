@@ -1,37 +1,8 @@
-package me.mouamle.bot.pdf;
+package me.mouamle.bot.pdf.messages;
 
 public enum BotMessage {
 
-    MSG_START(
-            "أرسل لي صورة أو عدة صور لتحويلها إلى PDF\n" +
-                    "أنضم الى قناتي @SwiperTeam لرؤية اخر التحديثات.\n" +
-                    "ولمعرفة كيفية إستخدام البوت.\n",
-            "أرسل لي صورة أو عدة صور لتحويلها إلى PDF\n" +
-                    "أنضم الى قناتي @SwiperTeam لرؤية اخر التحديثات.\n" +
-                    "ولمعرفة كيفية إستخدام البوت.\n"
-    ),
-
-    MSG_NO_IMAGES(
-            "You don't have any images\nIf you had sent some in the past, try sending them again",
-            "ليس لديك أي صور.\n" +
-                    "إذا كنت قد أرسلت الصور سابقاً، حاول الإرسال مجدداً."
-    ),
-    MSG_IMAGE_ADDED(
-            "Send more or press \"Generate PDF \uD83D\uDCC4\".\nWait 10 seconds before creating the document",
-            "أرسل المزيد أو اضغط \"إنشاء المستند \uD83D\uDCC4\"." +
-                    "\nأنتضر 10 ثواني قبل إنشاء المستند."
-    ),
-    MSG_IMAGES_CLEARED(
-            "Removed all of your images.",
-            "تمت إزالة كل الصور."
-    ),
-
-    MSG_MAX_IMAGES(
-            "Can't have more than 32 images\nYou have %d/32",
-            "لا يمكن إضافة أكثر من 32 صورة\n" +
-                    "عدد صورك %d/32."
-    ),
-
+    /* Generic */
     MSG_FILE_RENAMED(
             "File renamed.",
             "تم تغيير إسم المستند."
@@ -44,15 +15,6 @@ public enum BotMessage {
             "Generating your pdf ⏳...\nPlease wait 10 to 20 seconds before pressing the button again.",
             "جارِ إنشاء المستند ⏳...\n" +
                     "الرجاء الأنتضار لمدة 10 الى 20 ثانية قبل الضغط على الزر مره ثانيه."
-    ),
-    MSG_N_IMAGES(
-            "File has %d images.",
-            "المستند يحتوي على %d صورة."
-    ),
-
-    ERROR_DOWNLOAD_ERROR(
-            "Could not download your images, try again later.",
-            "لم يتم تحميل الصورة، حاول في وقتٍ لاحق."
     ),
     ERROR_PDF_GENERATION_ERROR(
             "Could not generate the PDF file, contact bot admin",
@@ -83,7 +45,80 @@ public enum BotMessage {
     ERROR_MUST_JOIN(
             "Join our channel to see bot updates and to use the bot\n@SwiperTeam",
             "إنضم للقناة حتى تستطيع استخدام البوت"
+    ),
+    /* Generic */
+
+    /* PDF BOT */
+    PDF_MSG_START(
+            "أرسل لي صورة أو عدة صور لتحويلها إلى PDF\n" +
+                    "أنضم الى قناتي @SwiperTeam لرؤية اخر التحديثات.\n" +
+                    "ولمعرفة كيفية إستخدام البوت.\n",
+            "أرسل لي صورة أو عدة صور لتحويلها إلى PDF\n" +
+                    "أنضم الى قناتي @SwiperTeam لرؤية اخر التحديثات.\n" +
+                    "ولمعرفة كيفية إستخدام البوت.\n"
+    ),
+
+    PDF_MSG_NO_IMAGES(
+            "You don't have any images\nIf you had sent some in the past, try sending them again",
+            "ليس لديك أي صور.\n" +
+                    "إذا كنت قد أرسلت الصور سابقاً، حاول الإرسال مجدداً."
+    ),
+    MSG_CONTENT_ADDED(
+            "Send more or press \"Generate PDF \uD83D\uDCC4\".\nWait 10 seconds before creating the document",
+            "أرسل المزيد أو اضغط \"إنشاء المستند \uD83D\uDCC4\"." +
+                    "\nأنتضر 10 ثواني قبل إنشاء المستند."
+    ),
+    PDF_MSG_IMAGES_CLEARED(
+            "Removed all of your images.",
+            "تمت إزالة كل الصور."
+    ),
+
+    PDF_MSG_MAX_IMAGES(
+            "Can't have more than 32 images\nYou have %d/32",
+            "لا يمكن إضافة أكثر من 32 صورة\n" +
+                    "عدد صورك %d/32."
+    ),
+
+    PDF_MSG_N_IMAGES(
+            "File has %d images.",
+            "المستند يحتوي على %d صورة."
+    ),
+
+    PDF_ERROR_DOWNLOAD_ERROR(
+            "Could not download your images, try again later.",
+            "لم يتم تحميل الصورة، حاول في وقتٍ لاحق."
+    ),
+    /* PDF BOT */
+
+    /* Text Bot */
+    TEXT_MSG_START(
+            "Send a text message or multiple to put in a PDF\n" +
+                    "Join our channel @SwiperTeam to see all updates\n",
+            "أرسل لي كتابة في رسالة او في عدة رسائل لتحويلها الى PDF\n" +
+                    "أنضم الى قناتي @SwiperTeam لرؤية اخر التحديثات.\n" +
+                    "ولمعرفة كيفية إستخدام البوت."),
+    TEXT_MSG_MAX_TEXTS(
+            "Can't have more than 32 messages\nYou have %d/32",
+            "لا يمكن إضافة أكثر من 32 رسالة\n" +
+                    "عدد رسائلك %d/32."
+    ),
+    TEXT_MSG_IMAGES_CLEARED(
+            "Removed all of your texts.",
+            "تمت إزالة كل الرسائل."
+    ),
+    /* Text Bot */
+
+    /* OCR Bot */
+    MESSAGE_MUST_BE_DOCUMENT(
+            "Message must be a document, please send the image as a file",
+            "يجب ارسال الصورة على شكل ملف"
+    ),
+
+    OCR_CHOOSE_LANGUAGE(
+            "Please select a language",
+            "اختر لغة من فضلك"
     );
+    /* OCR Bot */
 
     private final String en, ar;
 

@@ -1,6 +1,7 @@
-package me.mouamle.bot.pdf.bots;
+package me.mouamle.bot.pdf.bots.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import me.mouamle.bot.pdf.bots.AbstractWebhookBot;
 import me.mouamle.bot.pdf.loader.BotData;
 import me.mouamle.bot.pdf.util.BotUtil;
 import me.mouamle.bot.pdf.util.keyboard.KeyboardUtils;
@@ -16,7 +17,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Objects;
 
-import static me.mouamle.bot.pdf.BotMessage.*;
+import static me.mouamle.bot.pdf.messages.BotMessage.*;
 
 @Slf4j
 public class OCRBot extends AbstractWebhookBot {

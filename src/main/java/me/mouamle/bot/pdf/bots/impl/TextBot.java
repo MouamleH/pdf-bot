@@ -20,6 +20,7 @@ import java.util.Queue;
 
 import static me.mouamle.bot.pdf.messages.BotMessage.*;
 
+
 @Slf4j
 @SuppressWarnings("rawtypes")
 public class TextBot extends AbstractWebhookBot {
