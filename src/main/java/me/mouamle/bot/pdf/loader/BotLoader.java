@@ -3,7 +3,6 @@ package me.mouamle.bot.pdf.loader;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
-import me.mouamle.bot.pdf.bots.Settings;
 
 import java.io.IOException;
 import java.nio.file.Files;

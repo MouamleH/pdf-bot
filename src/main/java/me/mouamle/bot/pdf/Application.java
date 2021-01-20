@@ -2,7 +2,6 @@ package me.mouamle.bot.pdf;
 
 import lombok.extern.slf4j.Slf4j;
 import me.mouamle.bot.pdf.bots.DisabledBot;
-import me.mouamle.bot.pdf.bots.OCRBot;
 import me.mouamle.bot.pdf.bots.PDFBot;
 import me.mouamle.bot.pdf.bots.Settings;
 import me.mouamle.bot.pdf.loader.BotData;
@@ -51,9 +50,6 @@ public class Application {
                     break;
                 case IMAGE_TO_PDF:
                     api.registerBot(new PDFBot(data));
-                    break;
-                case OCR:
-                    api.registerBot(new OCRBot(data));
                     break;
                 case TEXT_TO_PDF:
                 case MERGE_PDF:

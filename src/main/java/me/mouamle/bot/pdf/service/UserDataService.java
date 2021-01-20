@@ -19,12 +19,12 @@ public class UserDataService<K, V> implements SnapshotProvider<String, Integer> 
     }
 
     public boolean add(K key, V value) {
-        Queue<V> images = dataMap.getOrDefault(key, new ConcurrentLinkedQueue<>());
-        if (images.size() + 1 > maxEntries) {
+        Queue<V> data = dataMap.getOrDefault(key, new ConcurrentLinkedQueue<>());
+        if (data.size() + 1 > maxEntries) {
             return false;
         }
-        images.add(value);
-        dataMap.put(key, images);
+        data.add(value);
+        dataMap.put(key, data);
         return true;
     }
 
@@ -54,10 +54,9 @@ public class UserDataService<K, V> implements SnapshotProvider<String, Integer> 
         return get(key).size();
     }
 
-    public void clearUserImages(K key) {
+    public void clear(K key) {
         dataMap.remove(key);
     }
-
 
     @Override
     public String getName() {

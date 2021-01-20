@@ -1,5 +1,6 @@
-package me.mouamle.bot.pdf.bots;
+package me.mouamle.bot.pdf.bots.impl;
 
+import me.mouamle.bot.pdf.bots.AbstractWebhookBot;
 import me.mouamle.bot.pdf.loader.BotData;
 import me.mouamle.bot.pdf.service.RateLimiter;
 import me.mouamle.bot.pdf.util.keyboard.KeyboardUtils;

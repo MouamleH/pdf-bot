@@ -1,26 +1,24 @@
 package me.mouamle.bot.pdf.service;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
+import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import lombok.extern.slf4j.Slf4j;
-import me.mouamle.bot.pdf.BotMessage;
-import me.mouamle.bot.pdf.bots.PDFBot;
+import me.mouamle.bot.pdf.bots.AbstractWebhookBot;
+import me.mouamle.bot.pdf.messages.BotMessage;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-import static me.mouamle.bot.pdf.BotMessage.ERROR_DOWNLOAD_ERROR;
-import static me.mouamle.bot.pdf.BotMessage.ERROR_PDF_GENERATION_ERROR;
+import static me.mouamle.bot.pdf.messages.BotMessage.ERROR_PDF_GENERATION_ERROR;
+import static me.mouamle.bot.pdf.messages.BotMessage.PDF_ERROR_DOWNLOAD_ERROR;
 
 @Slf4j
 public class PDFTasks {
@@ -28,7 +26,41 @@ public class PDFTasks {
     private static final Executor executor = Executors.newFixedThreadPool(8);
     private static final Executor adminsExecutor = Executors.newFixedThreadPool(16);
 
-    public static void generatePDF(PDFBot bot, int userId, boolean isPaid,
+    public static void generateTextPDF(AbstractWebhookBot bot, int userId, boolean isPaid,
+                                       Collection<String> texts,
+                                       Consumer<File> onSuccess, Consumer<BotMessage> onError) {
+        final Executor current = isPaid ? adminsExecutor : executor;
+        current.execute(() -> {
+            String outputFileName = String.format("%s.pdf", userId);
+            try {
+                Document document = new Document(PageSize.A4);
+                PdfWriter.getInstance(document, new FileOutputStream(outputFileName));
+                document.open();
+
+                document.addCreator("https://t.me/" + bot.getBotUsername());
+                document.addAuthor("User: " + userId);
+
+                for (String page : texts) {
+                    final String[] paragraphs = page.split("\n\n");
+                    for (String paragraph : paragraphs) {
+                        final Paragraph element = new Paragraph(paragraph);
+                        document.add(element);
+                    }
+                    document.newPage();
+                }
+                document.close();
+
+                onSuccess.accept(new java.io.File(outputFileName));
+
+            } catch (IOException | DocumentException e) {
+                log.error("Could not create document", e);
+                onError.accept(ERROR_PDF_GENERATION_ERROR);
+                deleteFiles(Collections.singletonList(new java.io.File(outputFileName)));
+            }
+        });
+    }
+
+    public static void generatePDF(AbstractWebhookBot bot, int userId, boolean isPaid,
                                    Collection<String> imageIds,
                                    Consumer<File> onSuccess, Consumer<BotMessage> onError) {
         final Executor current = isPaid ? adminsExecutor : executor;
@@ -59,7 +91,7 @@ public class PDFTasks {
             }
 
             if (imagesFiles.isEmpty()) {
-                onError.accept(ERROR_DOWNLOAD_ERROR);
+                onError.accept(PDF_ERROR_DOWNLOAD_ERROR);
                 return;
             }
 
