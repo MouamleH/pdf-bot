@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.mouamle.bot.pdf.bots.impl.DisabledBot;
 import me.mouamle.bot.pdf.bots.impl.OCRBot;
 import me.mouamle.bot.pdf.bots.impl.PDFBot;
+import me.mouamle.bot.pdf.bots.impl.TextBot;
 import me.mouamle.bot.pdf.loader.BotData;
 import me.mouamle.bot.pdf.loader.BotLoader;
 import me.mouamle.bot.pdf.loader.Settings;
@@ -53,10 +54,11 @@ public class Application {
                     api.registerBot(new PDFBot(data));
                     break;
                 case OCR:
-
                     api.registerBot(new OCRBot(data));
                     break;
                 case TEXT_TO_PDF:
+                    api.registerBot(new TextBot(data));
+                    break;
                 case MERGE_PDF:
                 case EXTRACT_CONTENT:
                     log.error("Bot {} tried to register as {} but it's not implemented yet!", data.getUsername(), data.getType());
