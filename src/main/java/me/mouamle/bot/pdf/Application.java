@@ -53,6 +53,7 @@ public class Application {
                     api.registerBot(new PDFBot(data));
                     break;
                 case OCR:
+
                     api.registerBot(new OCRBot(data));
                     break;
                 case TEXT_TO_PDF:
