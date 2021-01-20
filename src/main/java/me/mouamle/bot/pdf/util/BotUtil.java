@@ -2,8 +2,8 @@ package me.mouamle.bot.pdf.util;
 
 import lombok.extern.slf4j.Slf4j;
 import me.mouamle.bot.pdf.Application;
-import me.mouamle.bot.pdf.messages.BotMessage;
 import me.mouamle.bot.pdf.bots.AbstractPollingBot;
+import me.mouamle.bot.pdf.messages.BotMessage;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

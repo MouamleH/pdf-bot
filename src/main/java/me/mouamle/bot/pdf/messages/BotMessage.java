@@ -106,7 +106,19 @@ public enum BotMessage {
             "Removed all of your texts.",
             "تمت إزالة كل الرسائل."
     ),
-    /* Text Bot */;
+    /* Text Bot */
+
+    /* OCR Bot */
+    MESSAGE_MUST_BE_DOCUMENT(
+            "Message must be a document, please send the image as a file",
+            "يجب ارسال الصورة على شكل ملف"
+    ),
+
+    OCR_CHOOSE_LANGUAGE(
+            "Please select a language",
+            "اختر لغة من فضلك"
+    );
+    /* OCR Bot */
 
     private final String en, ar;
 

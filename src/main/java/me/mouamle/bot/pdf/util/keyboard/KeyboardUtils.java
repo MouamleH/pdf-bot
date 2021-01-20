@@ -3,6 +3,7 @@ package me.mouamle.bot.pdf.util.keyboard;
 import me.mouamle.bot.pdf.util.keyboard.image.BuildClearImagesKeyboard;
 import me.mouamle.bot.pdf.util.keyboard.image.BuildImageKeyboardAR;
 import me.mouamle.bot.pdf.util.keyboard.image.BuildImageKeyboardEN;
+import me.mouamle.bot.pdf.util.keyboard.ocr.BuildSelectLanguageKeyboard;
 import mouamle.generator.KeyboardGenerator;
 import mouamle.generator.classes.ButtonHolder;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -56,6 +57,10 @@ public class KeyboardUtils {
         } else {
             return new InlineKeyboardMarkup(generateKeyboard(new BuildImageKeyboardEN()));
         }
+    }
+
+    public static InlineKeyboardMarkup buildSelectLanguageKeyboardOCR(String languageCode) {
+        return new InlineKeyboardMarkup(generateKeyboard(new BuildSelectLanguageKeyboard()));
     }
 
 }
